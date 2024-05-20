@@ -1,7 +1,7 @@
 import { Entity, PrimaryGeneratedColumn, Column, OneToOne, JoinColumn } from 'typeorm';
 import { Persona } from './persona.entity';
 
-@Entity()
+@Entity({name : 'docentes'})
 export class Docente {
     @PrimaryGeneratedColumn()
     id: number;
@@ -9,7 +9,7 @@ export class Docente {
     @Column({ name: 'cargo' })
     cargo: string;
 
-    @OneToOne(()=> Persona)
+    @OneToOne(()=> Persona, { cascade: true })
     @JoinColumn({ name: 'id_persona' })
     persona: Persona;
 }

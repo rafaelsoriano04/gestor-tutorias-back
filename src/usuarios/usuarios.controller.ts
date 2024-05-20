@@ -6,8 +6,8 @@ export class UsuariosController {
     constructor(private usuariosService: UsuariosService) {}
 
     @Post('register')
-    async register(@Body() userData: { identificacion: string; nombre: string; apellido: string; telefono: string; email: string; nombreUsuario: string; contrasena: string; cargo: string }) {
-        const newUser = await this.usuariosService.registerUser(userData);
-        return newUser;
+    async register(@Body() usuarioData: any) {
+        return this.usuariosService.saveUsuario(usuarioData);
     }
+
 }
