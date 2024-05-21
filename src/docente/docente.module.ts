@@ -5,12 +5,10 @@ import { DocenteService } from './docente.service';
 import { Persona } from 'src/entities/persona.entity';
 import { Docente } from 'src/entities/docente.entity';
 
-
 @Module({
-    imports: [
-        TypeOrmModule.forFeature([Persona, Docente])
-    ],
-    controllers: [DocenteController],
-    providers: [DocenteService]
+  imports: [TypeOrmModule.forFeature([Persona, Docente])],
+  controllers: [DocenteController],
+  providers: [DocenteService],
+  exports: [DocenteService],
 })
-export class DocenteModule { }
+export class DocenteModule {}

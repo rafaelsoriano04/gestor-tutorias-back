@@ -6,6 +6,7 @@ import { Persona } from './entities/persona.entity';
 import { Informe } from './entities/informe.entity';
 import { Actividad } from './entities/actividad.entity';
 import { DocenteModule } from './docente/docente.module';
+import { AuthModule } from './auth/auth.module';
 
 
 @Module({
@@ -21,6 +22,7 @@ import { DocenteModule } from './docente/docente.module';
       synchronize: true,
     }),
     DocenteModule,
+    AuthModule,
   ],
 
 
