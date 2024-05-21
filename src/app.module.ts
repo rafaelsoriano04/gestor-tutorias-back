@@ -1,12 +1,12 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { Usuario } from './entities/usuario.entity';
 import { Docente } from './entities/docente.entity';
 import { Estudiante } from './entities/estudiante.entity';
 import { Persona } from './entities/persona.entity';
 import { Informe } from './entities/informe.entity';
 import { Actividad } from './entities/actividad.entity';
 import { UsuariosModule } from './usuarios/usuarios.module';
+import { DocenteModule } from './docente/docente.module';
 
 
 @Module({
@@ -18,13 +18,10 @@ import { UsuariosModule } from './usuarios/usuarios.module';
       username: 'root',
       password: 'root',
       database: 'gestor-tutorias',  
-      entities: [Usuario,Docente,Estudiante,Persona,Informe, Actividad],          
+      entities: [Docente,Estudiante,Persona,Informe, Actividad],          
       synchronize: true,            
     }),
-    UsuariosModule,
-
-    
-    
+    DocenteModule,
   ],
 
 
