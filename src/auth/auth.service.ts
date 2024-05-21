@@ -1,7 +1,7 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { DocenteService } from 'src/docente/docente.service';
-import { AuthPayloadDTO } from 'src/dtos/auth.dto';
+import { AuthPayloadDTO } from 'src/auth/dto/auth.dto';
 
 @Injectable()
 export class AuthService {
@@ -17,7 +17,7 @@ export class AuthService {
     if (!findUser) throw new UnauthorizedException('Credenciales invalidas');
 
     if (contrasenia === findUser.contrasenia) {
-      const { contrasenia, ...user } = findUser;
+      const { contrasenia, persona, cargo, ...user } = findUser;
       return this.jwtService.sign(user);
     }
 

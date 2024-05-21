@@ -8,7 +8,7 @@ export class DocenteService {
   constructor(
     @InjectRepository(Docente) private docentesRepository: Repository<Docente>,
   ) {}
-
+  
   save(docente: any): Promise<Docente> {
     if (docente != null) {
       if (docente.persona.identificacion.length == 10) {
