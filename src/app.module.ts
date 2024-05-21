@@ -5,7 +5,6 @@ import { Estudiante } from './entities/estudiante.entity';
 import { Persona } from './entities/persona.entity';
 import { Informe } from './entities/informe.entity';
 import { Actividad } from './entities/actividad.entity';
-import { UsuariosModule } from './usuarios/usuarios.module';
 import { DocenteModule } from './docente/docente.module';
 
 
@@ -17,16 +16,16 @@ import { DocenteModule } from './docente/docente.module';
       port: 3306,
       username: 'root',
       password: 'root',
-      database: 'gestor-tutorias',  
-      entities: [Docente,Estudiante,Persona,Informe, Actividad],          
-      synchronize: true,            
+      database: 'gestor-tutorias',
+      entities: [Docente, Estudiante, Persona, Informe, Actividad],
+      synchronize: true,
     }),
     DocenteModule,
   ],
 
 
 })
-export class AppModule {}
+export class AppModule { }
 
 
 
