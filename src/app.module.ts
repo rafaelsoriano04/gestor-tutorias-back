@@ -17,11 +17,13 @@ import { UsuariosModule } from './usuarios/usuarios.module';
       port: 3306,
       username: 'root',
       password: 'root',
-      database: 'gestor-turorias',  
+      database: 'gestor-tutorias',  
       entities: [Usuario,Docente,Estudiante,Persona,Informe, Actividad],          
       synchronize: true,            
     }),
     UsuariosModule,
+
+    
     
   ],
 
