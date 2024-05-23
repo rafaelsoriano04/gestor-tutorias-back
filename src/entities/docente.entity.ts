@@ -1,5 +1,6 @@
-import { Entity, PrimaryGeneratedColumn, Column, OneToOne, JoinColumn } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, OneToOne, JoinColumn, OneToMany } from 'typeorm';
 import { Persona } from './persona.entity';
+import { Estudiante } from './estudiante.entity';
 
 @Entity({ name: 'docentes' })
 export class Docente {
@@ -15,7 +16,11 @@ export class Docente {
     @Column({ name: 'cargo' })
     cargo: string;
 
-    @OneToOne(() => Persona, { cascade: true })
+    @OneToOne(() => Persona, persona => persona.docente, { cascade: true })
     @JoinColumn({ name: 'id_persona' })
     persona: Persona;
+
+    @OneToMany(() => Estudiante, estudiante => estudiante.docente, { cascade: true })
+    estudiantes: Estudiante[];
+
 }

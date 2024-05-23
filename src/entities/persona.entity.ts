@@ -1,4 +1,6 @@
 import { Entity, PrimaryGeneratedColumn, Column, OneToOne } from 'typeorm';
+import { Estudiante } from './estudiante.entity';
+import { Docente } from './docente.entity';
 
 @Entity({name : 'personas'})
 export class Persona {
@@ -19,6 +21,12 @@ export class Persona {
 
   @Column()
   email: string;
+
+  @OneToOne(() => Estudiante, estudiante => estudiante.persona)
+  estudiante: Estudiante;
+
+  @OneToOne(() => Docente, docente => docente.persona)
+  docente: Docente;
 
 }
 

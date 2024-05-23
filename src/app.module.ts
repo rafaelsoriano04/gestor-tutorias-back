@@ -19,7 +19,7 @@ import { AuthModule } from './auth/auth.module';
       password: 'root',
       database: 'gestor-tutorias',
       entities: [Docente, Estudiante, Persona, Informe, Actividad],
-      synchronize: true,
+      synchronize: false,
     }),
     DocenteModule,
     AuthModule,
