@@ -1,6 +1,6 @@
 import { BadRequestException, Body, Controller, Get, NotFoundException, Param, Post, UsePipes, ValidationPipe } from '@nestjs/common';
 import { DocenteService } from './docente.service';
-import { DocenteDto } from 'src/dtos/docente.dto';
+import { DocenteDto } from '../dtos/docente.dto';
 
 
 @Controller('docente')
@@ -20,11 +20,10 @@ export class DocenteController {
             return new BadRequestException(messages);
         },
     }))
+
     async save(@Body() docenteDto: DocenteDto) {
         return this.docenteService.save(docenteDto);
     }
-
-
 
     @Get(':id')
     async getDocenteById(@Param('id') id: number) {
