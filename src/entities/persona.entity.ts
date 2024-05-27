@@ -7,7 +7,7 @@ export class Persona {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column()
+  @Column({unique: true})
   identificacion: string;
 
   @Column()

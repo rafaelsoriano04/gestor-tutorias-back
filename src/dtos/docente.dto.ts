@@ -1,6 +1,6 @@
 import { Type } from 'class-transformer';
 import { IsString, IsNotEmpty, Length, MinLength, Matches, ValidateNested } from 'class-validator';
-import { PersonaDto } from './persona.dto';
+import { PersonaDto } from '../dtos/persona.dto';
 
 export class DocenteDto {
     @IsNotEmpty()
