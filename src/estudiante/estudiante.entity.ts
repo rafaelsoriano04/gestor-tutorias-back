@@ -1,7 +1,7 @@
 import { Entity, PrimaryGeneratedColumn, Column, JoinColumn, OneToOne, OneToMany, ManyToOne } from 'typeorm';
-import { Docente } from './docente.entity';
-import { Informe } from './informe.entity';
-import { Persona } from './persona.entity';
+import { Informe } from '../entities/informe.entity';
+import { Persona } from '../entities/persona.entity';
+import { Docente } from 'src/docente/docente.entity';
 
 @Entity({ name: 'estudiantes' })
 export class Estudiante {
@@ -15,6 +15,7 @@ export class Estudiante {
   carrera: string;
 
   @Column()
+  
   tema: string;
 
   @Column()
@@ -29,8 +30,10 @@ export class Estudiante {
 
   @OneToOne(() => Persona, persona => persona.estudiante, { cascade: true })
   @JoinColumn({ name: 'id_persona' })
-  persona: number;
+  persona: Persona;
 
   @OneToMany(() => Informe, informe => informe.estudiante, { cascade: true })
   informes: Informe[];
+
+
 }

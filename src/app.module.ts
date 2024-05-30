@@ -1,12 +1,13 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { Docente } from './entities/docente.entity';
-import { Estudiante } from './entities/estudiante.entity';
+import { Estudiante } from './estudiante/estudiante.entity';
 import { Persona } from './entities/persona.entity';
 import { Informe } from './entities/informe.entity';
 import { Actividad } from './entities/actividad.entity';
 import { DocenteModule } from './docente/docente.module';
 import { AuthModule } from './auth/auth.module';
+import { EstudianteModule } from './estudiante/estudiante.module';
+import { Docente } from './docente/docente.entity';
 
 
 @Module({
@@ -23,6 +24,7 @@ import { AuthModule } from './auth/auth.module';
     }),
     DocenteModule,
     AuthModule,
+    EstudianteModule,
   ],
 
 
