@@ -1,9 +1,9 @@
 import { BadRequestException, ConflictException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Docente } from 'src/entities/docente.entity';
 import { Repository } from 'typeorm';
 import * as bcrypt from 'bcrypt';
 import { DocenteDto } from '../dtos/docente.dto';
+import { Docente } from './docente.entity';
 
 @Injectable()
 export class DocenteService {

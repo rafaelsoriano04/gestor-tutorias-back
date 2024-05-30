@@ -16,7 +16,7 @@ export class DocenteDto {
     cargo: string;
 
     @IsNotEmpty()
-  @ValidateNested()
-  @Type(() => PersonaDto)
-  persona: PersonaDto;
+    @ValidateNested()
+    @Type(() => PersonaDto)
+    persona: PersonaDto;
 }
