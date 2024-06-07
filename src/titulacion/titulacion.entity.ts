@@ -5,11 +5,10 @@ import {
   JoinColumn,
   OneToOne,
   OneToMany,
-  ManyToOne,
 } from 'typeorm';
 import { Estudiante } from 'src/estudiante/estudiante.entity';
 import { Docente } from 'src/docente/docente.entity';
-import { Informe } from './informe.entity';
+import { Informe } from '../informe/informe.entity';
 
 @Entity({ name: 'titulacion' })
 export class Titulacion {
@@ -21,6 +20,9 @@ export class Titulacion {
 
   @Column()
   tema: string;
+
+  @Column()
+  avance_total: number;
 
   @OneToOne(() => Estudiante, (estudiante) => estudiante.titulacion)
   @JoinColumn({ name: 'id_estudiante' })

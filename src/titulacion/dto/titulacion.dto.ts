@@ -11,4 +11,6 @@ export class TitulacionDto {
   @IsNotEmpty({ message: 'Ingrese la fecha de aprobación' })
   @Type(() => Date)
   fecha_aprobacion: Date;
+
+  id_docente: number;
 }

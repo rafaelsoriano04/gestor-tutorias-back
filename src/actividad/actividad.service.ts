@@ -1,9 +1,9 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { Actividad } from 'src/entities/actividad.entity';
-import { ActividadDto } from 'src/dtos/actividad.dto';
-import { Informe } from 'src/entities/informe.entity';
+import { Actividad } from './actividad.entity';
+import { ActividadDto } from './dto/actividad.dto';
+import { Informe } from '../informe/informe.entity';
 
 @Injectable()
 export class ActividadService {
@@ -24,12 +24,12 @@ export class ActividadService {
   }
 
   async findByInformeId(informeId: number): Promise<Actividad[]> {
-    return this.actividadRepository.find({
+    return await this.actividadRepository.find({
       where: { informe: { id: informeId } },
     });
   }
 
-  //CREAR LA ACTIVIDAD PRIMERO COMPROBANDO LA ID DEL INFORME AL QUE PERTENECE
+  // Crear actividad
   async createActividad(ActividadDto: ActividadDto): Promise<Actividad> {
     const informe = await this.informeRepository.findOne({
       where: { id: ActividadDto.id_informe },
@@ -43,6 +43,6 @@ export class ActividadService {
       informe,
     });
 
-    return this.actividadRepository.save(actividad);
+    return await this.actividadRepository.save(actividad);
   }
 }

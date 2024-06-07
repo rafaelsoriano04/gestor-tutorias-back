@@ -1,5 +1,4 @@
-import { Persona } from 'src/entities/persona.entity';
-import { Estudiante } from 'src/estudiante/estudiante.entity';
+import { Persona } from 'src/persona/persona.entity';
 import {
   Entity,
   PrimaryGeneratedColumn,
@@ -8,7 +7,7 @@ import {
   JoinColumn,
   OneToMany,
 } from 'typeorm';
-import { Titulacion } from 'src/entities/titulacion.entity';
+import { Titulacion } from 'src/titulacion/titulacion.entity';
 
 @Entity({ name: 'docentes' })
 export class Docente {
@@ -21,17 +20,9 @@ export class Docente {
   @Column({ name: 'contrasenia' })
   contrasenia: string;
 
-  @Column({ name: 'cargo' })
-  cargo: string;
-
   @OneToOne(() => Persona, (persona) => persona.docente, { cascade: true })
   @JoinColumn({ name: 'id_persona' })
   persona: Persona;
-
-  @OneToMany(() => Estudiante, (estudiante) => estudiante.docente, {
-    cascade: true,
-  })
-  estudiantes: Estudiante[];
 
   @OneToMany(() => Titulacion, (titulacion) => titulacion.docente)
   titulacion: Titulacion[];

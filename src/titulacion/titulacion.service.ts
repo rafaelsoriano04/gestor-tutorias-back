@@ -5,13 +5,13 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Estudiante } from 'src/estudiante/estudiante.entity';
-import { Informe } from 'src/entities/informe.entity';
+import { Informe } from '../informe/informe.entity';
 import { Repository } from 'typeorm';
-import { Titulacion } from 'src/entities/titulacion.entity';
-import { TitulacionDto } from 'src/dtos/titulacion.dto';
+import { Titulacion } from 'src/titulacion/titulacion.entity';
+import { TitulacionDto } from 'src/titulacion/dto/titulacion.dto';
 
 @Injectable()
-export class TitulicaionService {
+export class TitulacionService {
   constructor(
     @InjectRepository(Titulacion)
     private titulacionRepository: Repository<Titulacion>,
@@ -35,14 +35,14 @@ export class TitulicaionService {
     return titulacion;
   }
 
-  async createTitulacion(createTema: TitulacionDto) {
+  async createTitulacion(createTema: Titulacion) {
     const tituloExist = await this.titulacionRepository.findOne({
       where: { tema: createTema.tema },
     });
-    if (!tituloExist) {
-      return await this.titulacionRepository.save(createTema);
+    if (tituloExist) {
+      throw new BadRequestException('El proyecto ya existe');
     }
-    throw new BadRequestException('El proyecto ya existe');
+    return await this.titulacionRepository.save(createTema);
   }
 
   /* async updateTitulacion(id: number, updateTitulacion: TitulacionDto) {
