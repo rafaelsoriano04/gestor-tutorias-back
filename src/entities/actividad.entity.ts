@@ -1,18 +1,24 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn } from 'typeorm';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  ManyToOne,
+  JoinColumn,
+} from 'typeorm';
 import { Informe } from './informe.entity';
 
-@Entity({name : 'actividades'})
+@Entity({ name: 'actividades' })
 export class Actividad {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column({name: "titulo"})
-  titulo: string;
-
-  @Column({name: "descripcion"})
+  @Column({ type: 'varchar' })
   descripcion: string;
 
-  @ManyToOne(() => Informe, informe => informe.actividades)
-  @JoinColumn({name: 'id_informe'})
+  @Column({ type: 'date' })
+  fecha_actividad: Date;
+
+  @ManyToOne(() => Informe, (informe) => informe.actividades)
+  @JoinColumn({ name: 'id_informe' })
   informe: Informe;
 }
