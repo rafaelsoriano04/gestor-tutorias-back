@@ -59,6 +59,7 @@ export class EstudianteService {
   
       // Mapea los resultados para ajustar la salida al formato deseado.
       return estudiantes.map(estudiante => ({
+        id: estudiante.id,
         nombre: estudiante.persona.nombre + ' ' + estudiante.persona.apellido,
         cedula: estudiante.persona.identificacion,
         carrera: estudiante.carrera,
