@@ -1,18 +1,20 @@
-import {
-  Injectable,
-  NotFoundException,
-  ConflictException,
-} from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Informe } from 'src/entities/informe.entity';
 import { InformeDto } from 'src/dtos/informe.dto';
+import { Estudiante } from 'src/estudiante/estudiante.entity';
+import { Titulacion } from 'src/entities/titulacion.entity';
 
 @Injectable()
 export class InformeService {
   constructor(
     @InjectRepository(Informe)
     private informeRepository: Repository<Informe>,
+    @InjectRepository(Estudiante)
+    private estudianteRepository: Repository<Estudiante>,
+    @InjectRepository(Titulacion)
+    private titulacionRepository: Repository<Titulacion>,
   ) {}
 
   //ENCONTRAR EL INFORME POR EL ID DEL ESTUDIANTE
@@ -43,16 +45,31 @@ export class InformeService {
   }
 
   //CREAR EL INFORME
-  async createInforme(InformeDto: InformeDto): Promise<Informe> {
-    const existingInforme = await this.informeRepository.findOne({
-      where: { porcentaje_avance: InformeDto.porcentaje_avance },
+  async createInforme(informeDto: InformeDto): Promise<Informe> {
+    const informe = new Informe();
+    informe.anexo = informeDto.anexo;
+    informe.fecha = informeDto.fecha;
+    informe.porcentaje_avance = informeDto.porcentaje_avance;
+
+    const estudiante = await this.estudianteRepository.findOne({
+      where: { id: informeDto.id_estudiante },
     });
 
-    if (existingInforme) {
-      throw new ConflictException('Cambie el porcentaje del informe');
+    if (!estudiante) {
+      throw new NotFoundException('Estudiante no encontrado');
     }
 
-    const informe = this.informeRepository.create(InformeDto);
-    return this.informeRepository.save(informe);
+    const titulacion = await this.titulacionRepository.findOne({
+      where: { id: informeDto.id_titulacion },
+    });
+
+    if (!titulacion) {
+      throw new NotFoundException('Titulación no encontrada');
+    }
+
+    informe.estudiante = estudiante;
+    informe.titulacion = titulacion;
+
+    return await this.informeRepository.save(informe);
   }
 }

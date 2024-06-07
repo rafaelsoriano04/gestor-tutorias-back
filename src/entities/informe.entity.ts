@@ -15,7 +15,7 @@ export class Informe {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column({ type: 'varchar' })
+  @Column({ type: 'varchar', length: 255 })
   anexo: string;
 
   @Column({ type: 'decimal' })

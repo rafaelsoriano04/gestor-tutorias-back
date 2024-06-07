@@ -12,14 +12,13 @@ export class InformeDto {
   @IsDate({ message: 'Fecha incorrecta' })
   @IsNotEmpty({ message: 'Ingrese el anexo del informe' })
   @Type(() => Date)
-  fecha_aprobacion: Date;
-  fecha: string;
+  fecha: Date;
 
   @IsNotEmpty({ message: 'Sin estudiante' })
   @IsNumber()
-  estudianteId: number;
+  id_estudiante: number;
 
   @IsNotEmpty({ message: 'Sin titulacion' })
   @IsNumber()
-  titulacionId: number;
+  id_titulacion: number;
 }
