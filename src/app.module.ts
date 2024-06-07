@@ -8,7 +8,10 @@ import { DocenteModule } from './docente/docente.module';
 import { AuthModule } from './auth/auth.module';
 import { EstudianteModule } from './estudiante/estudiante.module';
 import { Docente } from './docente/docente.entity';
-
+import { TitulicaionModule } from './titulicaion/titulacion.module';
+import { Titulacion } from './entities/titulacion.entity';
+import { InformeModule } from './informe/informe.module';
+import { ActividadModule } from './actividad/actividad.module';
 
 @Module({
   imports: [
@@ -19,17 +22,15 @@ import { Docente } from './docente/docente.entity';
       username: 'root',
       password: 'root',
       database: 'gestor-tutorias',
-      entities: [Docente, Estudiante, Persona, Informe, Actividad],
+      entities: [Docente, Estudiante, Persona, Informe, Actividad, Titulacion],
       synchronize: false,
     }),
     DocenteModule,
     AuthModule,
     EstudianteModule,
+    TitulicaionModule,
+    InformeModule,
+    ActividadModule,
   ],
-
-
 })
-export class AppModule { }
-
-
-
+export class AppModule {}

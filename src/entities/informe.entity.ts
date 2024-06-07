@@ -1,25 +1,37 @@
-import { Entity, PrimaryGeneratedColumn, Column, OneToMany, JoinColumn, ManyToMany, ManyToOne } from 'typeorm';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  ManyToOne,
+  JoinColumn,
+  OneToMany,
+} from 'typeorm';
+import { Estudiante } from 'src/estudiante/estudiante.entity';
 import { Actividad } from './actividad.entity';
-import { Estudiante } from '../estudiante/estudiante.entity';
+import { Titulacion } from './titulacion.entity';
 
 @Entity({ name: 'informes' })
 export class Informe {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column({ name: 'anexo' })
+  @Column({ type: 'varchar', length: 255 })
   anexo: string;
+
+  @Column({ type: 'decimal' })
+  porcentaje_avance: number;
 
   @Column({ type: 'date' })
   fecha: Date;
 
-  @Column({ name: 'porcentaje_avance' })
-  porcentaje_avance: number;
-
-  @ManyToOne(() => Estudiante, estudiante => estudiante.informes)
+  @ManyToOne(() => Estudiante, (estudiante) => estudiante.informes)
   @JoinColumn({ name: 'id_estudiante' })
-  estudiante: number;
+  estudiante: Estudiante;
 
-  @OneToMany(() => Actividad, actividad => actividad.informe, { cascade: true })
+  @ManyToOne(() => Titulacion, (titulacion) => titulacion.informes)
+  @JoinColumn({ name: 'id_titulacion' })
+  titulacion: Titulacion;
+
+  @OneToMany(() => Actividad, (actividad) => actividad.informe)
   actividades: Actividad[];
 }
