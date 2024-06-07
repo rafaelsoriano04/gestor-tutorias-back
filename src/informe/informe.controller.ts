@@ -1,6 +1,6 @@
 import { Controller, Get, Post, Param, Body } from '@nestjs/common';
 import { InformeService } from './informe.service';
-import { InformeDto } from 'src/dtos/informe.dto';
+import { InformeDto } from './dto/informe.dto';
 
 @Controller('informes')
 export class InformeController {

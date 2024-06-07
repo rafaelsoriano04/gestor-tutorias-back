@@ -20,7 +20,8 @@ export class AuthService {
 
     const isMatch = await bcrypt.compare(contrasenia, findUser.contrasenia);
     if (isMatch) {
-      const { contrasenia, persona, cargo, ...userDetails } = findUser;
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      const { contrasenia, persona, ...userDetails } = findUser;
       return this.jwtService.sign(userDetails); // Firmar y retornar el JWT
     }
 

@@ -1,10 +1,10 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { Informe } from 'src/entities/informe.entity';
-import { InformeDto } from 'src/dtos/informe.dto';
+import { Informe } from './informe.entity';
+import { InformeDto } from './dto/informe.dto';
 import { Estudiante } from 'src/estudiante/estudiante.entity';
-import { Titulacion } from 'src/entities/titulacion.entity';
+import { Titulacion } from 'src/titulacion/titulacion.entity';
 
 @Injectable()
 export class InformeService {
@@ -17,14 +17,14 @@ export class InformeService {
     private titulacionRepository: Repository<Titulacion>,
   ) {}
 
-  //ENCONTRAR EL INFORME POR EL ID DEL ESTUDIANTE
+  // Encontrar el informe por estudiante
   async findByEstudianteId(estudianteId: number): Promise<Informe[]> {
     return this.informeRepository.find({
-      where: { estudiante: { id: estudianteId } },
+      where: { titulacion: { estudiante: { id: estudianteId } } },
     });
   }
 
-  //ENCONTRAR INFORME POR EL TEMA (POR SI ACASO JEEJE)
+  // ENCONTRAR INFORME POR EL TEMA (POR SI ACASO JEEJE)
   async findByTitulacionTema(tema: string): Promise<Informe[]> {
     return this.informeRepository
       .createQueryBuilder('informe')
@@ -67,7 +67,7 @@ export class InformeService {
       throw new NotFoundException('Titulación no encontrada');
     }
 
-    informe.estudiante = estudiante;
+    informe.titulacion.estudiante = estudiante;
     informe.titulacion = titulacion;
 
     return await this.informeRepository.save(informe);
