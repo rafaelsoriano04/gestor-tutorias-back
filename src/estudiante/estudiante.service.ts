@@ -119,4 +119,15 @@ export class EstudianteService {
 
     throw new NotFoundException('El docente no tiene estudiantes asignados');
   }
+  async getEstudianteById(id_estudiante: number): Promise<Estudiante | undefined> {
+
+    const estudiante = await this.estudianteRepository.findOne({
+      where: { id: id_estudiante },
+      relations: ['persona', 'titulacion'],
+    });
+    
+    return estudiante;
+
+  }
+
 }
