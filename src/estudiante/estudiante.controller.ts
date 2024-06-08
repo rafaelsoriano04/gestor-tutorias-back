@@ -18,4 +18,16 @@ export class EstudianteController {
   async save(@Body() newEstudiante: CreateEstudianteDto) {
     return await this.estudianteService.save(newEstudiante);
   }
+
+   @Get('info/:id_estudiante')
+    async getEstudianteById(
+      @Param('id_estudiante') id_estudiante: number,
+    ) {
+      const estudiante = await this.estudianteService.getEstudianteById(id_estudiante);
+      return estudiante;
+
+    }
+
+
+
 }
