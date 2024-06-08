@@ -16,10 +16,15 @@ export class Estudiante {
   @Column()
   carrera: string;
 
+  @Column()
+  estado: string;
+
   @OneToOne(() => Persona, (persona) => persona.estudiante, { cascade: true })
   @JoinColumn({ name: 'id_persona' })
   persona: Persona;
 
-  @OneToOne(() => Titulacion, (titulacion) => titulacion.estudiante)
+  @OneToOne(() => Titulacion, (titulacion) => titulacion.estudiante, {
+    cascade: true,
+  })
   titulacion: Titulacion;
 }

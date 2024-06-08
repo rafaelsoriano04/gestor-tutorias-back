@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  ConflictException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CreateEstudianteDto } from './dto/estudiante.dto';
 import { Repository } from 'typeorm';
@@ -28,8 +32,27 @@ export class EstudianteService {
       throw new NotFoundException('Docente no encontrado');
     }
 
+    const estudianteExists = await this.estudianteRepository.findOneBy({
+      persona: {
+        identificacion: createEstudianteDto.persona.identificacion,
+      },
+    });
+
+    if (estudianteExists) {
+      throw new ConflictException('El estudiante ya existe');
+    }
+
+    const titulacionExists = await this.estudianteRepository.findOneBy({
+      titulacion: { tema: createEstudianteDto.titulacion.tema },
+    });
+
+    if (titulacionExists) {
+      throw new ConflictException('El tema ya existe');
+    }
+
     const estudiante = new Estudiante();
     estudiante.carrera = createEstudianteDto.carrera;
+    estudiante.estado = 'En progreso';
     // Crear persona
     const persona = new Persona(); // Asumiendo que tienes un constructor que crea el objeto Persona
     persona.identificacion = createEstudianteDto.persona.identificacion;
@@ -52,7 +75,8 @@ export class EstudianteService {
     titulacion.estudiante = newEstudiante;
     titulacion.fecha_aprobacion =
       createEstudianteDto.titulacion.fecha_aprobacion;
-    this.titulacionService.createTitulacion(titulacion);
+
+    await this.titulacionService.createTitulacion(titulacion);
 
     return newEstudiante;
   }
@@ -67,28 +91,32 @@ export class EstudianteService {
   }
 
   async getAllByDocente(id_docente: number): Promise<any[]> {
-    try {
-      // Obtiene los estudiantes que están asociados con un docente específico.
-      const estudiantes = await this.estudianteRepository.find({
-        where: { titulacion: { docente: { id: id_docente } } },
-        relations: ['persona, titulacion'], // Asegúrate de cargar también la relación con 'docente' si es necesario para otros usos
-      });
+    const docente = this.docenteRepository.findOne({
+      where: { id: id_docente },
+    });
 
-      // Mapea los resultados para ajustar la salida al formato deseado.
-      return estudiantes.map((estudiante) => ({
-        id: estudiante.id,
-        nombre: estudiante.persona.nombre + ' ' + estudiante.persona.apellido,
-        cedula: estudiante.persona.identificacion,
-        carrera: estudiante.carrera,
-
-        fechaAprobacion: estudiante.titulacion.fecha_aprobacion,
-        porcentaje: estudiante.titulacion.avance_total,
-      }));
-    } catch (error) {
-      // Maneja cualquier error que ocurra durante la consulta.
-      throw new NotFoundException(
-        'Error al obtener los estudiantes por docente: ' + error.message,
-      );
+    if (!docente) {
+      throw new NotFoundException('Docente not found');
     }
+
+    const estudiantes = this.estudianteRepository.find({
+      relations: {
+        titulacion: true,
+        persona: true,
+      },
+      where: {
+        titulacion: {
+          docente: {
+            id: id_docente,
+          },
+        },
+      },
+    });
+
+    if (estudiantes) {
+      return estudiantes;
+    }
+
+    throw new NotFoundException('El docente no tiene estudiantes asignados');
   }
 }
