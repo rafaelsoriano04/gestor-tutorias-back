@@ -23,10 +23,13 @@ export class Informe {
   @Column({ type: 'date' })
   fecha: Date;
 
+  @Column({ type: 'varchar', length: 12 })
+  estado: string;
+
   @ManyToOne(() => Titulacion, (titulacion) => titulacion.informes)
   @JoinColumn({ name: 'id_titulacion' })
   titulacion: Titulacion;
 
-  @OneToMany(() => Actividad, (actividad) => actividad.informe)
+  @OneToMany(() => Actividad, (actividad) => actividad.informe, { cascade: true })
   actividades: Actividad[];
 }

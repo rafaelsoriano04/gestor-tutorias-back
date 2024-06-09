@@ -5,6 +5,7 @@ import { Informe } from './informe.entity';
 import { InformeDto } from './dto/informe.dto';
 import { Estudiante } from 'src/estudiante/estudiante.entity';
 import { Titulacion } from 'src/titulacion/titulacion.entity';
+import { Actividad } from 'src/actividad/actividad.entity';
 
 @Injectable()
 export class InformeService {
@@ -15,6 +16,8 @@ export class InformeService {
     private estudianteRepository: Repository<Estudiante>,
     @InjectRepository(Titulacion)
     private titulacionRepository: Repository<Titulacion>,
+    @InjectRepository(Actividad)
+        private actividadRepository: Repository<Actividad>
   ) {}
 
   // Encontrar el informe por estudiante
@@ -72,4 +75,21 @@ export class InformeService {
 
     return await this.informeRepository.save(informe);
   }
+
+  async deleteInforme(id: number): Promise<void> {
+    const informe = await this.informeRepository.findOne({
+        where: { id },
+        relations: ['actividades'] // Asegúrate de cargar las actividades
+    });
+
+    if (!informe) {
+        throw new NotFoundException(`Informe con ID ${id} no encontrado`);
+    }
+
+    // Primero eliminamos las actividades asociadas
+    await this.actividadRepository.remove(informe.actividades);
+
+    // Luego eliminamos el informe
+    await this.informeRepository.remove(informe);
+}
 }
