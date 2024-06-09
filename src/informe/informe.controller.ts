@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Param, Body } from '@nestjs/common';
+import { Controller, Get, Post, Param, Body, Delete } from '@nestjs/common';
 import { InformeService } from './informe.service';
 import { InformeDto } from './dto/informe.dto';
 
@@ -25,4 +25,9 @@ export class InformeController {
   async create(@Body() createInforme: InformeDto) {
     return this.informeService.createInforme(createInforme);
   }
+
+  @Delete(':id')
+    async delete(@Param('id') id: number) {
+        return this.informeService.deleteInforme(id);
+    }
 }
