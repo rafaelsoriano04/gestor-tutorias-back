@@ -4,7 +4,7 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { CreateEstudianteDto } from './dto/estudiante.dto';
+import { CreateEstudianteDto, UpdateEstudianteDto } from './dto/estudiante.dto';
 import { Repository } from 'typeorm';
 import { Estudiante } from './estudiante.entity';
 import { Docente } from 'src/docente/docente.entity';
@@ -119,15 +119,49 @@ export class EstudianteService {
 
     throw new NotFoundException('El docente no tiene estudiantes asignados');
   }
-  async getEstudianteById(id_estudiante: number): Promise<Estudiante | undefined> {
 
+  async update(id_estudiante: number, request: UpdateEstudianteDto) {
+    const estudiante = await this.estudianteRepository.findOne({
+      where: { id: id_estudiante },
+      relations: {
+        titulacion: true,
+        persona: true,
+      },
+    });
+
+    console.log(estudiante);
+
+    if (request.nombre) {
+      estudiante.persona.nombre = request.nombre;
+    }
+
+    if (request.apellido) {
+      estudiante.persona.apellido = request.apellido;
+    }
+
+    if (request.carrera) {
+      estudiante.carrera = request.carrera;
+    }
+
+    if (request.tema) {
+      estudiante.titulacion.tema = request.tema;
+    }
+
+    if (request.fecha_aprobacion) {
+      estudiante.titulacion.fecha_aprobacion = request.fecha_aprobacion;
+    }
+
+    return await this.estudianteRepository.save(estudiante);
+  }
+
+  async getEstudianteById(
+    id_estudiante: number,
+  ): Promise<Estudiante | undefined> {
     const estudiante = await this.estudianteRepository.findOne({
       where: { id: id_estudiante },
       relations: ['persona', 'titulacion'],
     });
-    
+
     return estudiante;
-
   }
-
 }

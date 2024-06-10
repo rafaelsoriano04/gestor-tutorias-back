@@ -1,6 +1,6 @@
-import { Body, Controller, Get, Param, Post } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, Put } from '@nestjs/common';
 import { EstudianteService } from './estudiante.service';
-import { CreateEstudianteDto } from './dto/estudiante.dto';
+import { CreateEstudianteDto, UpdateEstudianteDto } from './dto/estudiante.dto';
 import { Estudiante } from './estudiante.entity';
 
 @Controller('estudiante')
@@ -19,15 +19,18 @@ export class EstudianteController {
     return await this.estudianteService.save(newEstudiante);
   }
 
-   @Get('info/:id_estudiante')
-    async getEstudianteById(
-      @Param('id_estudiante') id_estudiante: number,
-    ) {
-      const estudiante = await this.estudianteService.getEstudianteById(id_estudiante);
-      return estudiante;
+  @Get('info/:id_estudiante')
+  async getEstudianteById(@Param('id_estudiante') id_estudiante: number) {
+    const estudiante =
+      await this.estudianteService.getEstudianteById(id_estudiante);
+    return estudiante;
+  }
 
-    }
-
-
-
+  @Put('/:id')
+  async update(
+    @Param('id') id_estudiante: number,
+    @Body() request: UpdateEstudianteDto,
+  ) {
+    return await this.estudianteService.update(id_estudiante, request);
+  }
 }

@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  ConflictException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Informe } from './informe.entity';
@@ -69,6 +73,14 @@ export class InformeService {
     if (!titulacion) {
       throw new NotFoundException('Titulación no encontrada');
     }
+
+    if (titulacion.avance_total > informeDto.porcentaje_avance) {
+      throw new ConflictException('Porcenteje no valido');
+    }
+
+    titulacion.avance_total = informeDto.porcentaje_avance;
+
+    this.titulacionRepository.save(titulacion);
 
     // Asignamos la relación entre estudiante y titulacion antes de asignarla a informe
     titulacion.estudiante = estudiante;

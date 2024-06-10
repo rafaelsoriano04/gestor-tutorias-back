@@ -6,3 +6,11 @@ export class CreateEstudianteDto {
   persona: PersonaDto;
   titulacion: TitulacionDto;
 }
+
+export class UpdateEstudianteDto {
+  carrera: string;
+  nombre: string;
+  apellido: string;
+  tema: string;
+  fecha_aprobacion: Date;
+}
