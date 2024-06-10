@@ -33,14 +33,19 @@ export class TitulacionService {
   async createTitulacion(titulacion: Titulacion) {
     return await this.titulacionRepository.save(titulacion);
   }
-
-  /* async updateTitulacion(id: number, updateTitulacion: TitulacionDto) {
-    const tema = updateTitulacion;
-    const temaFind = this.titulacionRepository.findOne({
-      where: { id_estudiante },
+  // Nuevo método para actualizar el avance total
+  async updateAvanceTotal(
+    id: number,
+    nuevoAvance: number,
+  ): Promise<Titulacion> {
+    const titulacion = await this.titulacionRepository.findOne({
+      where: { id: id },
     });
-    if (!temaFind) {
-      throw new NotFoundException('');
+    if (!titulacion) {
+      throw new NotFoundException(`No se encontró el tema`);
     }
-  }*/
+
+    titulacion.avance_total = nuevoAvance;
+    return await this.titulacionRepository.save(titulacion);
+  }
 }

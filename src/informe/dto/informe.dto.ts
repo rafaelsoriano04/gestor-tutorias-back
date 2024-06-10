@@ -24,5 +24,5 @@ export class InformeDto {
 
   @IsNotEmpty({ message: 'Sin titulacion' })
   @IsString()
-  estado: number;
+  estado: string;
 }
