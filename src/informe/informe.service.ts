@@ -17,7 +17,7 @@ export class InformeService {
     @InjectRepository(Titulacion)
     private titulacionRepository: Repository<Titulacion>,
     @InjectRepository(Actividad)
-        private actividadRepository: Repository<Actividad>
+    private actividadRepository: Repository<Actividad>,
   ) {}
 
   // Encontrar el informe por estudiante
@@ -70,20 +70,23 @@ export class InformeService {
       throw new NotFoundException('Titulación no encontrada');
     }
 
-    informe.titulacion.estudiante = estudiante;
+    // Asignamos la relación entre estudiante y titulacion antes de asignarla a informe
+    titulacion.estudiante = estudiante;
+
     informe.titulacion = titulacion;
+    informe.estado = informeDto.estado;
 
     return await this.informeRepository.save(informe);
   }
 
   async deleteInforme(id: number): Promise<void> {
     const informe = await this.informeRepository.findOne({
-        where: { id },
-        relations: ['actividades'] // Asegúrate de cargar las actividades
+      where: { id },
+      relations: ['actividades'], // Asegúrate de cargar las actividades
     });
 
     if (!informe) {
-        throw new NotFoundException(`Informe con ID ${id} no encontrado`);
+      throw new NotFoundException(`Informe con ID ${id} no encontrado`);
     }
 
     // Primero eliminamos las actividades asociadas
@@ -91,5 +94,5 @@ export class InformeService {
 
     // Luego eliminamos el informe
     await this.informeRepository.remove(informe);
-}
+  }
 }
