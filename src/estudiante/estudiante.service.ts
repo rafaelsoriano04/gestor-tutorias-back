@@ -19,6 +19,8 @@ export class EstudianteService {
     private estudianteRepository: Repository<Estudiante>,
     @InjectRepository(Docente)
     private docenteRepository: Repository<Docente>,
+    @InjectRepository(Persona)
+    private personaRepository: Repository<Persona>,
     private titulacionService: TitulacionService,
   ) {}
 
@@ -32,13 +34,11 @@ export class EstudianteService {
       throw new NotFoundException('Docente no encontrado');
     }
 
-    const estudianteExists = await this.estudianteRepository.findOneBy({
-      persona: {
-        identificacion: createEstudianteDto.persona.identificacion,
-      },
+    const personaExists = await this.personaRepository.findOneBy({
+      identificacion: createEstudianteDto.persona.identificacion,
     });
 
-    if (estudianteExists) {
+    if (personaExists) {
       throw new ConflictException('El estudiante ya existe');
     }
 
@@ -52,7 +52,7 @@ export class EstudianteService {
 
     const estudiante = new Estudiante();
     estudiante.carrera = createEstudianteDto.carrera;
-    estudiante.estado = 'En progreso';
+    estudiante.estado = 'En proceso';
     // Crear persona
     const persona = new Persona(); // Asumiendo que tienes un constructor que crea el objeto Persona
     persona.identificacion = createEstudianteDto.persona.identificacion;
@@ -161,6 +161,7 @@ export class EstudianteService {
       where: { id: id_estudiante },
       relations: ['persona', 'titulacion'],
     });
+
 
     return estudiante;
   }
