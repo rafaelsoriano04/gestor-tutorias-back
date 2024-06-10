@@ -162,7 +162,6 @@ export class EstudianteService {
       relations: ['persona', 'titulacion'],
     });
 
-
     return estudiante;
   }
 }
