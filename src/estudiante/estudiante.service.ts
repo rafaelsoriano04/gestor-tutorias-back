@@ -164,4 +164,14 @@ export class EstudianteService {
 
     return estudiante;
   }
+
+  async updateEstado(id_estudiante: number, estado: string) {
+    const estudiante = await this.estudianteRepository.findOneBy({
+      id: id_estudiante,
+    });
+
+    estudiante.estado = estado;
+
+    await this.estudianteRepository.save(estudiante);
+  }
 }

@@ -33,4 +33,12 @@ export class EstudianteController {
   ) {
     return await this.estudianteService.update(id_estudiante, request);
   }
+
+  @Put('/:id/:estado')
+  async updateEstado(
+    @Param('id') id_estudiante: number,
+    @Param('estado') estado: string,
+  ) {
+    return await this.estudianteService.updateEstado(id_estudiante, estado);
+  }
 }
