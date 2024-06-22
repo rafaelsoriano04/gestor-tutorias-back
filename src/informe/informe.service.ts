@@ -94,7 +94,7 @@ export class InformeService {
   async deleteInforme(id: number): Promise<void> {
     const informe = await this.informeRepository.findOne({
       where: { id },
-      relations: ['actividades'], // Asegúrate de cargar las actividades
+      relations: ['actividades', 'titulacion'], // Asegúrate de cargar las actividades
     });
 
     if (!informe) {
@@ -106,5 +106,20 @@ export class InformeService {
 
     // Luego eliminamos el informe
     await this.informeRepository.remove(informe);
+
+    //Obtener el ultimo informe y actualizar el valor
+    const informesRestantes = await this.informeRepository.find({
+      where: { titulacion: { id: informe.titulacion.id } }
+    });
+
+    if (informesRestantes.length > 0) {
+      const ultimoInforme = informesRestantes[informesRestantes.length - 1];
+      informe.titulacion.avance_total = ultimoInforme.porcentaje_avance;
+    } else {
+      informe.titulacion.avance_total = 0; // Si no quedan informes, reiniciar el avance total
+    }
+
+    await this.titulacionRepository.save(informe.titulacion);
+
   }
 }
