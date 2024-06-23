@@ -46,7 +46,7 @@ export class InformeService {
       where: { id },
     });
     if (!informe) {
-      throw new NotFoundException(`La id del informe es incorrecta`);
+      throw new NotFoundException(`El id del informe es incorrecta`);
     }
     return informe;
   }
@@ -57,6 +57,7 @@ export class InformeService {
     informe.anexo = informeDto.anexo;
     informe.fecha = informeDto.fecha;
     informe.porcentaje_avance = informeDto.porcentaje_avance;
+    informe.actividades = informeDto.actividades;
 
     const estudiante = await this.estudianteRepository.findOne({
       where: { id: informeDto.id_estudiante },
@@ -109,7 +110,7 @@ export class InformeService {
 
     //Obtener el ultimo informe y actualizar el valor
     const informesRestantes = await this.informeRepository.find({
-      where: { titulacion: { id: informe.titulacion.id } }
+      where: { titulacion: { id: informe.titulacion.id } },
     });
 
     if (informesRestantes.length > 0) {
@@ -120,6 +121,50 @@ export class InformeService {
     }
 
     await this.titulacionRepository.save(informe.titulacion);
+  }
 
+  async update(request: Informe): Promise<Informe> {
+    const informe = await this.informeRepository.findOne({
+      where: { id: request.id },
+      relations: ['titulacion'],
+    });
+
+    const nextInforme = await this.informeRepository
+      .createQueryBuilder('informe')
+      .where('informe.id > :id AND informe.id_titulacion = :id_titulacion', {
+        id: informe.id,
+        id_titulacion: informe.titulacion.id,
+      })
+      .orderBy('informe.id', 'ASC')
+      .getOne();
+
+    if (
+      nextInforme &&
+      nextInforme.porcentaje_avance <= request.porcentaje_avance
+    ) {
+      throw new ConflictException(
+        'El porcentaje es igual o mayor al del informe siguiente.',
+      );
+    }
+
+    request.actividades.map(async (actividad) => {
+      if (actividad.id) {
+        const actividadExistente = await this.actividadRepository.findOneBy({
+          id: actividad.id,
+        });
+        actividadExistente.descripcion = actividad.descripcion;
+        actividadExistente.fecha_actividad = actividad.fecha_actividad;
+        this.actividadRepository.save(actividad);
+      } else {
+        actividad.informe = request;
+        this.actividadRepository.save(actividad);
+      }
+    });
+
+    informe.fecha = request.fecha;
+    informe.porcentaje_avance = request.porcentaje_avance;
+    informe.estado = request.estado;
+
+    return await this.informeRepository.save(informe);
   }
 }

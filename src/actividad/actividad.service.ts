@@ -45,4 +45,10 @@ export class ActividadService {
 
     return await this.actividadRepository.save(actividad);
   }
+
+  async eliminarActividades(actividades: Actividad[]): Promise<void> {
+    actividades.map(async (actividad) => {
+      await this.actividadRepository.remove(actividad);
+    });
+  }
 }

@@ -1,6 +1,8 @@
-import { Controller, Get, Post, Param, Body } from '@nestjs/common';
+import { Controller, Get, Post, Param, Body, Delete } from '@nestjs/common';
 import { ActividadService } from './actividad.service';
 import { ActividadDto } from './dto/actividad.dto';
+import { Actividad } from './actividad.entity';
+
 @Controller('actividades')
 export class ActividadController {
   constructor(private readonly actividadService: ActividadService) {}
@@ -18,5 +20,10 @@ export class ActividadController {
   @Post()
   async create(@Body() actividadDto: ActividadDto) {
     return await this.actividadService.createActividad(actividadDto);
+  }
+
+  @Delete()
+  async eliminarActividades(@Body() actividades: Actividad[]): Promise<void> {
+    await this.actividadService.eliminarActividades(actividades);
   }
 }

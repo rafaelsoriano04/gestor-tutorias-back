@@ -30,6 +30,8 @@ export class Informe {
   @JoinColumn({ name: 'id_titulacion' })
   titulacion: Titulacion;
 
-  @OneToMany(() => Actividad, (actividad) => actividad.informe, { cascade: true })
+  @OneToMany(() => Actividad, (actividad) => actividad.informe, {
+    cascade: true,
+  })
   actividades: Actividad[];
 }

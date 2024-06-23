@@ -1,4 +1,12 @@
-import { Controller, Get, Post, Param, Body, Delete } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Param,
+  Body,
+  Delete,
+  Put,
+} from '@nestjs/common';
 import { InformeService } from './informe.service';
 import { InformeDto } from './dto/informe.dto';
 
@@ -18,7 +26,7 @@ export class InformeController {
 
   @Get(':id')
   async findById(@Param('id') id: number) {
-    return this.informeService.findById(id);
+    return await this.informeService.findById(id);
   }
 
   @Post()
@@ -27,7 +35,12 @@ export class InformeController {
   }
 
   @Delete(':id')
-    async delete(@Param('id') id: number) {
-        return this.informeService.deleteInforme(id);
-    }
+  async delete(@Param('id') id: number) {
+    return this.informeService.deleteInforme(id);
+  }
+
+  @Put()
+  async update(@Body() request) {
+    return this.informeService.update(request);
+  }
 }
