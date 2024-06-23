@@ -21,4 +21,6 @@ export class TitulacionController {
   ) {
     return await this.titulacionService.updateAvanceTotal(id, nuevoAvance);
   }
+
+  
 }
