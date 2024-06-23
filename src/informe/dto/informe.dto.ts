@@ -1,5 +1,6 @@
 import { IsNotEmpty, IsString, IsNumber, IsDate } from 'class-validator';
 import { Type } from 'class-transformer';
+import { Actividad } from 'src/actividad/actividad.entity';
 export class InformeDto {
   @IsNotEmpty({ message: 'Ingrese el anexo del informe' })
   @IsString({ message: 'Debe ser tipo cadena' })
@@ -25,4 +26,6 @@ export class InformeDto {
   @IsNotEmpty({ message: 'Sin titulacion' })
   @IsString()
   estado: string;
+
+  actividades: Actividad[];
 }
