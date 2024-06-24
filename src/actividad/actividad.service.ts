@@ -26,6 +26,7 @@ export class ActividadService {
   async findByInformeId(informeId: number): Promise<Actividad[]> {
     return await this.actividadRepository.find({
       where: { informe: { id: informeId } },
+      order: { fecha_actividad: 'ASC' }, // Asegúrate de especificar el orden de manera correcta
     });
   }
 
