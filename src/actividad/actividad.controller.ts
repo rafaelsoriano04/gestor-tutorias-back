@@ -26,4 +26,11 @@ export class ActividadController {
   async eliminarActividades(@Body() actividades: Actividad[]): Promise<void> {
     await this.actividadService.eliminarActividades(actividades);
   }
+
+  @Get('estudiante/:id')
+  async getActivitiesByStudentId(
+    @Param('id') id: number,
+  ): Promise<Actividad[]> {
+    return await this.actividadService.findActivitiesByStudentId(id);
+  }
 }

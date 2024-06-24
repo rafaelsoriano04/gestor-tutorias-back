@@ -51,4 +51,14 @@ export class ActividadService {
       await this.actividadRepository.remove(actividad);
     });
   }
+
+  async findActivitiesByStudentId(studentId: number): Promise<Actividad[]> {
+    return await this.actividadRepository
+      .createQueryBuilder('actividad')
+      .leftJoinAndSelect('actividad.informe', 'informe')
+      .leftJoinAndSelect('informe.titulacion', 'titulacion')
+      .leftJoinAndSelect('titulacion.estudiante', 'estudiante')
+      .where('estudiante.id = :studentId', { studentId })
+      .getMany();
+  }
 }
