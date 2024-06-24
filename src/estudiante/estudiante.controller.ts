@@ -41,4 +41,12 @@ export class EstudianteController {
   ) {
     return await this.estudianteService.updateEstado(id_estudiante, estado);
   }
+
+  @Put('/:id/:estado')
+  async updateAvanceTotal(
+    @Param('id') id_estudiante: number,
+    @Param('estado') estado: string,
+  ) {
+    return await this.estudianteService.updateEstado(id_estudiante, estado);
+  }
 }

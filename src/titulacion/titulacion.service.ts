@@ -48,4 +48,6 @@ export class TitulacionService {
     titulacion.avance_total = nuevoAvance;
     return await this.titulacionRepository.save(titulacion);
   }
+
+
 }
