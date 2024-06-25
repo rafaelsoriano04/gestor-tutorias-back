@@ -4,7 +4,7 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Between, Repository } from 'typeorm';
+import { Between, Equal, LessThan, MoreThan, Not, Repository } from 'typeorm';
 import { Informe } from './informe.entity';
 import { InformeDto } from './dto/informe.dto';
 import { Estudiante } from 'src/estudiante/estudiante.entity';
@@ -55,15 +55,15 @@ export class InformeService {
   }
 
   //CREAR EL INFORME
-  async createInforme(informeDto: InformeDto): Promise<Informe> {
+  async createInforme(request: InformeDto): Promise<Informe> {
     const informe = new Informe();
-    informe.anexo = informeDto.anexo;
-    informe.fecha = informeDto.fecha;
-    informe.porcentaje_avance = informeDto.porcentaje_avance;
-    informe.actividades = informeDto.actividades;
+    informe.anexo = request.anexo;
+    informe.fecha = request.fecha;
+    informe.porcentaje_avance = request.porcentaje_avance;
+    informe.actividades = request.actividades;
 
     const estudiante = await this.estudianteRepository.findOne({
-      where: { id: informeDto.id_estudiante },
+      where: { id: request.id_estudiante },
     });
 
     if (!estudiante) {
@@ -71,22 +71,23 @@ export class InformeService {
     }
 
     const titulacion = await this.titulacionRepository.findOne({
-      where: { id: informeDto.id_titulacion },
+      where: { id: request.id_titulacion },
     });
 
     if (!titulacion) {
       throw new NotFoundException('Titulación no encontrada');
     }
 
-    const informeDtoFecha = new Date(informeDto.fecha);
+    const fechaActual = new Date(request.fecha);
+
     const primerDiaMes = new Date(
-      informeDtoFecha.getFullYear(),
-      informeDtoFecha.getMonth(),
+      fechaActual.getFullYear(),
+      fechaActual.getMonth(),
       1,
     );
     const ultimoDiaMes = new Date(
-      informeDtoFecha.getFullYear(),
-      informeDtoFecha.getMonth() + 1,
+      fechaActual.getFullYear(),
+      fechaActual.getMonth() + 1,
       0,
     );
 
@@ -101,74 +102,52 @@ export class InformeService {
       throw new ConflictException('Ya existe un informe de este mes');
     }
 
-    const fechaActual = new Date(informeDto.fecha);
-
-    const primerDiaMesAnterior = new Date(
-      fechaActual.getFullYear(),
-      fechaActual.getMonth() - 1, // Se resta uno para obtener el mes anterior
-      1,
-    );
-
-    const ultimoDiaMesAnterior = new Date(
-      fechaActual.getFullYear(),
-      fechaActual.getMonth(),
-      0,
-    );
-
-    const primerDiaMesSiguiente = new Date(
-      fechaActual.getFullYear(),
-      fechaActual.getMonth() + 1,
-      1,
-    );
-
-    const ultimoDiaMesSiguiente = new Date(
-      fechaActual.getFullYear(),
-      fechaActual.getMonth() + 2,
-      0,
-    );
-
-    const informeMesAnterior = await this.informeRepository.findOne({
+    const informeMasProximoAnterior = await this.informeRepository.findOne({
       where: {
-        fecha: Between(primerDiaMesAnterior, ultimoDiaMesAnterior),
+        fecha: LessThan(fechaActual),
         titulacion,
+      },
+      order: {
+        fecha: 'DESC', // Orden descendente para obtener el más reciente
       },
     });
 
-    const informeMesSiguiente = await this.informeRepository.findOne({
+    if (
+      informeMasProximoAnterior &&
+      informeMasProximoAnterior.porcentaje_avance >= request.porcentaje_avance
+    ) {
+      throw new ConflictException(
+        `El porcentaje de avance debe ser mayor al del último informe: ${informeMasProximoAnterior.porcentaje_avance}%`,
+      );
+    }
+
+    const informeMasProximoPosterior = await this.informeRepository.findOne({
       where: {
-        fecha: Between(primerDiaMesSiguiente, ultimoDiaMesSiguiente),
+        fecha: MoreThan(fechaActual),
         titulacion,
+      },
+      order: {
+        fecha: 'ASC', // Orden ascendente para obtener el más próximo
       },
     });
 
-    if (informeMesAnterior) {
-      if (
-        informeMesAnterior.porcentaje_avance >= informeDto.porcentaje_avance
-      ) {
-        throw new ConflictException(
-          `El porcentaje de avance debe ser mayor al del mes anterior: ${informeMesAnterior.porcentaje_avance}%`,
-        );
-      }
+    if (
+      informeMasProximoPosterior &&
+      informeMasProximoPosterior.porcentaje_avance <= request.porcentaje_avance
+    ) {
+      throw new ConflictException(
+        `El porcentaje de avance debe ser menor al del último próximo informe: ${informeMasProximoAnterior.porcentaje_avance}%`,
+      );
     }
 
-    if (informeMesSiguiente) {
-      if (
-        informeMesSiguiente.porcentaje_avance <= informeDto.porcentaje_avance
-      ) {
-        throw new ConflictException(
-          `El porcentaje de avance debe ser menor al del mes siguiente: ${informeMesSiguiente.porcentaje_avance}%`,
-        );
-      }
-    }
-
-    titulacion.avance_total = informeDto.porcentaje_avance;
+    titulacion.avance_total = request.porcentaje_avance;
     this.titulacionRepository.save(titulacion);
 
     // Asignamos la relación entre estudiante y titulacion antes de asignarla a informe
     titulacion.estudiante = estudiante;
 
     informe.titulacion = titulacion;
-    informe.estado = informeDto.estado;
+    informe.estado = request.estado;
 
     return await this.informeRepository.save(informe);
   }
@@ -205,15 +184,16 @@ export class InformeService {
       relations: ['titulacion'],
     });
 
-    const informeDtoFecha = new Date(request.fecha);
+    const fechaActual = new Date(request.fecha);
+
     const primerDiaMes = new Date(
-      informeDtoFecha.getFullYear(),
-      informeDtoFecha.getMonth(),
+      fechaActual.getFullYear(),
+      fechaActual.getMonth(),
       1,
     );
     const ultimoDiaMes = new Date(
-      informeDtoFecha.getFullYear(),
-      informeDtoFecha.getMonth() + 1,
+      fechaActual.getFullYear(),
+      fechaActual.getMonth() + 1,
       0,
     );
 
@@ -225,67 +205,52 @@ export class InformeService {
       where: {
         fecha: Between(primerDiaMes, ultimoDiaMes),
         titulacion,
+        id: Not(Equal(informe.id)),
       },
     });
 
-    if (informeMes && informeMes.id !== informe.id) {
+    if (informeMes) {
       throw new ConflictException('Ya existe un informe de este mes');
     }
 
-    const fechaActual = new Date(request.fecha);
-
-    const primerDiaMesAnterior = new Date(
-      fechaActual.getFullYear(),
-      fechaActual.getMonth() - 1, // Se resta uno para obtener el mes anterior
-      1,
-    );
-
-    const ultimoDiaMesAnterior = new Date(
-      fechaActual.getFullYear(),
-      fechaActual.getMonth(),
-      0,
-    );
-
-    const primerDiaMesSiguiente = new Date(
-      fechaActual.getFullYear(),
-      fechaActual.getMonth() + 1,
-      1,
-    );
-
-    const ultimoDiaMesSiguiente = new Date(
-      fechaActual.getFullYear(),
-      fechaActual.getMonth() + 2,
-      0,
-    );
-
-    const informeMesAnterior = await this.informeRepository.findOne({
+    const informeMasProximoAnterior = await this.informeRepository.findOne({
       where: {
-        fecha: Between(primerDiaMesAnterior, ultimoDiaMesAnterior),
+        fecha: LessThan(fechaActual),
         titulacion,
+        id: Not(Equal(informe.id)),
+      },
+      order: {
+        fecha: 'DESC',
       },
     });
 
-    const informeMesSiguiente = await this.informeRepository.findOne({
-      where: {
-        fecha: Between(primerDiaMesSiguiente, ultimoDiaMesSiguiente),
-        titulacion,
-      },
-    });
-
-    if (informeMesAnterior) {
-      if (informeMesAnterior.porcentaje_avance >= request.porcentaje_avance) {
-        throw new ConflictException(
-          `El porcentaje de avance debe ser mayor al del mes anterior: ${informeMesAnterior.porcentaje_avance}%`,
-        );
-      }
+    if (
+      informeMasProximoAnterior &&
+      informeMasProximoAnterior.porcentaje_avance >= request.porcentaje_avance
+    ) {
+      throw new ConflictException(
+        `El porcentaje de avance debe ser mayor al del último informe: ${informeMasProximoAnterior.porcentaje_avance}%`,
+      );
     }
 
-    if (informeMesSiguiente) {
-      if (informeMesSiguiente.porcentaje_avance <= request.porcentaje_avance) {
-        throw new ConflictException(
-          `El porcentaje de avance debe ser menor al del mes siguiente: ${informeMesSiguiente.porcentaje_avance}%`,
-        );
-      }
+    const informeMasProximoPosterior = await this.informeRepository.findOne({
+      where: {
+        fecha: MoreThan(fechaActual),
+        titulacion,
+        id: Not(Equal(informe.id)),
+      },
+      order: {
+        fecha: 'ASC',
+      },
+    });
+
+    if (
+      informeMasProximoPosterior &&
+      informeMasProximoPosterior.porcentaje_avance <= request.porcentaje_avance
+    ) {
+      throw new ConflictException(
+        `El porcentaje de avance debe ser menor al del último próximo informe: ${informeMasProximoPosterior.porcentaje_avance}%`,
+      );
     }
 
     request.actividades.map(async (actividad) => {
@@ -302,7 +267,10 @@ export class InformeService {
       }
     });
 
-    titulacion.avance_total = request.porcentaje_avance;
+    if (!informeMasProximoPosterior) {
+      titulacion.avance_total = request.porcentaje_avance;
+    }
+
     await this.titulacionRepository.save(titulacion);
 
     informe.fecha = request.fecha;
