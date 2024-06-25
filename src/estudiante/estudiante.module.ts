@@ -8,10 +8,17 @@ import { Docente } from 'src/docente/docente.entity';
 import { DocenteModule } from 'src/docente/docente.module';
 import { Titulacion } from 'src/titulacion/titulacion.entity';
 import { TitulacionModule } from 'src/titulacion/titulacion.module';
+import { Actividad } from 'src/actividad/actividad.entity';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([Estudiante, Persona, Docente, Titulacion]),
+    TypeOrmModule.forFeature([
+      Estudiante,
+      Persona,
+      Docente,
+      Titulacion,
+      Actividad,
+    ]),
     DocenteModule,
     TitulacionModule,
   ],

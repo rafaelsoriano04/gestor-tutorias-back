@@ -11,6 +11,7 @@ import { Docente } from 'src/docente/docente.entity';
 import { Persona } from 'src/persona/persona.entity';
 import { TitulacionService } from '../titulacion/titulacion.service';
 import { Titulacion } from 'src/titulacion/titulacion.entity';
+import { Actividad } from 'src/actividad/actividad.entity';
 
 @Injectable()
 export class EstudianteService {
@@ -21,6 +22,8 @@ export class EstudianteService {
     private docenteRepository: Repository<Docente>,
     @InjectRepository(Persona)
     private personaRepository: Repository<Persona>,
+    @InjectRepository(Actividad)
+    private actividadRepository: Repository<Actividad>,
     private titulacionService: TitulacionService,
   ) {}
 
@@ -129,8 +132,6 @@ export class EstudianteService {
       },
     });
 
-    console.log(estudiante);
-
     if (request.nombre) {
       estudiante.persona.nombre = request.nombre;
     }
@@ -147,7 +148,18 @@ export class EstudianteService {
       estudiante.titulacion.tema = request.tema;
     }
 
-    if (request.fecha_aprobacion) {
+    if (request.fecha_aprobacion && estudiante.titulacion.fecha_aprobacion) {
+      const primeraActividad = await this.actividadRepository.findOne({
+        where: { informe: { titulacion: { id: estudiante.titulacion.id } } },
+      });
+      if (
+        primeraActividad &&
+        request.fecha_aprobacion > primeraActividad.fecha_actividad
+      ) {
+        throw new ConflictException(
+          `La fecha de aprobación debe ser igual o anterior a la fecha de la primera actividad: ${primeraActividad.fecha_actividad}`,
+        );
+      }
       estudiante.titulacion.fecha_aprobacion = request.fecha_aprobacion;
     }
 

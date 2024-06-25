@@ -9,6 +9,7 @@ import {
 } from '@nestjs/common';
 import { InformeService } from './informe.service';
 import { InformeDto } from './dto/informe.dto';
+import { Informe } from './informe.entity';
 
 @Controller('informes')
 export class InformeController {
@@ -40,7 +41,7 @@ export class InformeController {
   }
 
   @Put()
-  async update(@Body() request) {
+  async update(@Body() request: Informe) {
     return this.informeService.update(request);
   }
 }
